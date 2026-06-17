@@ -134,9 +134,10 @@ This class is in charge of all the connections with the missions table.
 * open docker and pull mysql container using the code (using cmd/bash): ```docker pull mysql:8.0```
 * build docker container using the code: ```docker run -d --name intelligence-mysql -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=Intelligence_db -p 3306:3306 mysql:8.0```
 * make sure the container runs using ```docker ps``` and search for `intelligence-mysql`. if you dont see it, run the code: ```docker start intelligence-mysql```.
-* only if you want the enter to the my sql database use ```docker exec -it intelligence-mysql mysql -uroot -p1234```.
+* only if you want to enter to the mysql database from the bash/cmd use this code: ```docker exec -it intelligence-mysql mysql -uroot -p1234```.
 * install required python packages using the code ```pip install mysql-connector-python```
 * in this stage of the project (we don't have main.py yet) you will have to enter to each file manually. so first run the connectionDB file, and than continue to the desire file (for missions mission_db and for agents agent_db)
+* in the future you will need to set venv in order to use it with fastapi/uvicorn.
 
 
 
