@@ -80,5 +80,6 @@ class ConnectionDB:
 if __name__ == "__main__":
     con = ConnectionDB()
     con.create_database()
+    con.create_tables()
 
 
