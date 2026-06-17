@@ -21,6 +21,17 @@ class ConnectionDB:
         )
 
 
+    def create_database(self):
+        connection = self.get_connection()
+        cursor = connection.cursor()
+
+        cursor.execute("CREATE DATABASE IF NOT EXISTS Intelligence_db;")
+
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+
     def create_tables(self):
         connection = self.get_connection()
         cursor = connection.cursor()
@@ -68,6 +79,6 @@ class ConnectionDB:
 
 if __name__ == "__main__":
     con = ConnectionDB()
-    con.create_tables()
+    con.create_database()
 
 
