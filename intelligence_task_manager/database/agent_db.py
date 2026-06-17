@@ -51,7 +51,21 @@ class AgentDB:
 
 
     def get_agent_by_id(self, id):
-        pass
+        """
+        :param id: int
+        :return: dict of the agent. None if not found
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+
+        try:
+            cursor.execute("SELECT * FROM agents WHERE id = %s;", (id,))
+            data = cursor.fetchone()
+            return data
+
+        finally:
+            cursor.close()
+            connector.close()
 
 
     def update_agent(self, id, data):
@@ -83,5 +97,5 @@ if __name__ == "__main__":
     # new = {"name": "Moshe", "specialty": "spy", "agent_rank": "Junior"}
     # print(ag.create_agent(new))
 
-    print(ag.get_all_agents())
-
+    # print(ag.get_all_agents())
+    # print(ag.get_agent_by_id(1))
