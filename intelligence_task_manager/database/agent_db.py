@@ -99,7 +99,7 @@ class AgentDB:
             connector.close()
 
 
-    def deactivate_agent(self, id: int) -> str:
+    def deactivate_agent(self, id: int) -> dict[str]:
         """
         sets is_active to False by id
         :return: str message
@@ -127,14 +127,47 @@ class AgentDB:
             connector.close()
 
 
+    def increment_completed(self, id: int):
+        """
+        increase the completed_missions by id
+        :param id:
+        :return:
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
 
+        cursor.execute("SELECT completed_missions FROM agents WHERE id = %s;", (id,))
+        agent_data = cursor.fetchone()
 
-    def increment_completed(self, id):
-        pass
+        cursor.close()
+        connector.close()
+
+        try:
+            cursor.execute("SELECT completed_missions FROM agents WHERE id = %s;", (id, ))
+            agent_data = cursor.fetchone()
+
+        #
+        # finally:
+        #
+        # if not agent_data:
+        #     return {"message": "mission completion number could not updated or agent does not exist"}
+        #
+        # if agent_data:
+        #     update_completed = {}
+        #     update_completed["completed_missions"] = agent_data.get("completed_missions", 0) + 1
+        #
+        #     self.update_agent(id, update_completed)
+        #
+        #     return {"message": "mission completion number updated"}
+        #
+        # else:
+        #     return {"message": "mission completion number could not updated or agent does not exist"}
+        #
+        # connector.commit()
 
 
     def increment_failed(self, id):
-        pass
+
 
 
     def get_agent_performance(self, id):
@@ -155,3 +188,5 @@ if __name__ == "__main__":
     # print(ag.update_agent(3, {"name": "David"}))
 
     # print(ag.deactivate_agent(4))
+
+    print(ag.increment_completed(3))
