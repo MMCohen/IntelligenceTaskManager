@@ -27,8 +27,22 @@ class MissionDB:
             connector.close()
 
 
-    def get_mission_by_id(self, id):
-        pass
+    def get_mission_by_id(self, id: int) -> dict | None:
+        """
+        :param id: int
+        :return: dict of the mission. None if not found
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+
+        try:
+            cursor.execute("SELECT * FROM missions WHERE id = %s;", (id,))
+            data = cursor.fetchone()
+            return data
+
+        finally:
+            cursor.close()
+            connector.close()
 
 
     def assign_mission(self, m_id, a_id):
