@@ -1,9 +1,35 @@
+from intelligence_task_manager.database.connection_db import ConnectionDB
 
+connection = ConnectionDB()
 
 class AgentDB:
 
-    def create_agent(self, data):
-        pass
+    def create_agent(self, data: dict) -> dict:
+        """
+        create a new agent
+        :return: the dict of the new agent
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+
+        sql_vals = data["name"], data["specialty"], data["agent_rank"]
+
+        try:
+            cursor.execute(f"""
+             INSERT INTO agents (name, specialty, agent_rank)
+             VALUES (%s, %s, %s)
+             ;
+             """, sql_vals)
+            last_id = cursor.lastrowid
+            connector.commit()
+
+            cursor.execute("SELECT * FROM agents WHERE id = %s;", (last_id,))
+            new_agent = cursor.fetchone()
+            return new_agent
+
+        finally:
+            cursor.close()
+            connector.close()
 
 
     def get_all_agents(self):
@@ -11,10 +37,6 @@ class AgentDB:
 
 
     def get_agent_by_id(self, id):
-        pass
-
-
-    def update_agent(self, id, data):
         pass
 
 
@@ -40,4 +62,10 @@ class AgentDB:
 
     def agents_active_count(self):
         pass
+
+
+if __name__ == "__main__":
+    ag = AgentDB()
+    new = {"name": "Moshe", "specialty": "spy", "agent_rank": "Junior"}
+    print(ag.create_agent(new))
 

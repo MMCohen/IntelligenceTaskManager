@@ -125,7 +125,8 @@ class MissionDB:
 
 if __name__ == "__main__":
     mis = MissionDB()
-    new_mis = {"title": "title", "description": "dfsdf" , "location": "dfsdf", "difficulty": 6, "importance": 6, "risk_level": "low"}
-    print(mis.create_mission(new_mis))
+    # new_mis = {"title": "title", "description": "dfsdf" , "location": "dfsdf", "difficulty": 6, "importance": 6, "risk_level": "low"}
+    # print(mis.create_mission(new_mis))
     # print(mis.get_all_missions())
+    # print(mis.get_mission_by_id(1))
 
