@@ -99,8 +99,34 @@ class AgentDB:
             connector.close()
 
 
-    def deactivate_agent(self, id):
-        pass
+    def deactivate_agent(self, id: int) -> str:
+        """
+        sets is_active to False by id
+        :return: str message
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+
+        try:
+            cursor.execute(f"""
+            UPDATE agents
+            SET is_active = False
+            WHERE id = %s;
+            """, (id, ))
+
+            connector.commit()
+
+            is_update = cursor.rowcount > 0
+            if is_update:
+                return {"message": f"agent id {id} deactivate successfully"}
+            if not is_update:
+                return {"message": f"agent id {id} could not be deactivate"}
+
+        finally:
+            cursor.close()
+            connector.close()
+
+
 
 
     def increment_completed(self, id):
@@ -126,4 +152,6 @@ if __name__ == "__main__":
 
     # print(ag.get_all_agents())
     # print(ag.get_agent_by_id(1))
-    print(ag.update_agent(3, {"name": "David"}))
+    # print(ag.update_agent(3, {"name": "David"}))
+
+    # print(ag.deactivate_agent(4))
