@@ -49,7 +49,7 @@ intelligence-task-manager/
 | location          | VARCHAR(255) | NOT NULL                                                                   | the mission location. location by text, not coordinates.                                        |
 | difficulty        | INT          | CHECK (0 > difficulty > 11)                                                | the mission difficulty by number. can be only between 1-10                                      |
 | importance        | INT          | CHECK (0 > difficulty > 11)                                                | the mission importance by number. can be only between 1-10                                      |
-| status            | ENUM         | DEFAULT NEW ENUM(NEW, ASSIGNED, PROGRESS_IN, COMPLETED, FAILED, CANCELLED) | the mission status. can be only from the list.                                                  |
+| status            | ENUM         | DEFAULT NEW ENUM(NEW, ASSIGNED, IN_PROGRESS, COMPLETED, FAILED, CANCELLED) | the mission status. can be only from the list.                                                  |
 | risk_level        | ENUM         | ENUM(LOW, MEDIUM, HIGH, CRITICAL)                                          | the system calculate the risk level automatically by `difficulty * 2 + importance = risk_level` |
 | assigned_agent_id | INT          |                                                                            | if assigned, will show to which agent. NULL if not assigned.                                    |
 
