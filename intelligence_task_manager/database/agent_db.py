@@ -33,7 +33,21 @@ class AgentDB:
 
 
     def get_all_agents(self):
-        pass
+        """
+        get a list of all agents. empty list if no missions.
+        :return:
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+
+        try:
+            cursor.execute("SELECT * FROM agents;")
+            data = cursor.fetchall()
+            return data
+
+        finally:
+            cursor.close()
+            connector.close()
 
 
     def get_agent_by_id(self, id):
@@ -66,6 +80,8 @@ class AgentDB:
 
 if __name__ == "__main__":
     ag = AgentDB()
-    new = {"name": "Moshe", "specialty": "spy", "agent_rank": "Junior"}
-    print(ag.create_agent(new))
+    # new = {"name": "Moshe", "specialty": "spy", "agent_rank": "Junior"}
+    # print(ag.create_agent(new))
+
+    print(ag.get_all_agents())
 
