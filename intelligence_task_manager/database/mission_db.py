@@ -123,7 +123,12 @@ class MissionDB:
 
 
     def count_all_missions(self):
-        pass
+        """
+        count all missions
+        :return: int
+        """
+        all_missions = self.get_all_missions()
+        return len(all_missions)
 
 
     def count_by_status(self, status: str) -> int:
@@ -207,4 +212,4 @@ if __name__ == "__main__":
     # print(mis.get_open_missions_by_agent(2))
     # print(mis.count_open_missions())
     # print(mis.count_critical_missions())
-    print(mis.count_by_status("NEW"))
+    print(mis.count_all_missions())
