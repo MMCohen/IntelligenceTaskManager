@@ -152,11 +152,29 @@ class MissionDB:
         return open_missions["open_missions"]
 
 
-    def count_critical_missions(self):
-        pass
+    def count_critical_missions(self) -> int:
+        """
+        count missions with risk level = critical
+        :return: int
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                            SELECT COUNT(*) as critical_missions FROM missions
+                            WHERE risk_level = "critical";
+                            """)
+
+            critical_missions = cursor.fetchone()
+
+        finally:
+            cursor.close()
+            connector.close()
+
+        return critical_missions["critical_missions"]
 
 
-    def get_top_agent(self):
+def get_top_agent(self):
         pass
 
 
@@ -168,4 +186,5 @@ if __name__ == "__main__":
     # print(mis.get_mission_by_id(1))
 
     # print(mis.get_open_missions_by_agent(2))
-    print(mis.count_open_missions())
+    # print(mis.count_open_missions())
+    print(mis.count_critical_missions())
