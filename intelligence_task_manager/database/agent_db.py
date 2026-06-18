@@ -92,6 +92,9 @@ class AgentDB:
             connector.commit()
 
             is_update = cursor.rowcount > 0
+
+            return is_update
+
             if is_update:
                 return {"message": f"agent id {id} update successfully"}
             if not is_update:
@@ -267,7 +270,7 @@ if __name__ == "__main__":
 
     # print(ag.get_all_agents())
     # print(ag.get_agent_by_id(1))
-    # print(ag.update_agent(3, {"name": "David"}))
+    print(ag.update_agent(3, {"name": "David"}))
 
     # print(ag.deactivate_agent(4))
 
@@ -279,4 +282,4 @@ if __name__ == "__main__":
 
     # print((ag.increment_failed(2)))
 
-    print(ag.get_top_agent())
+    # print(ag.get_top_agent())
