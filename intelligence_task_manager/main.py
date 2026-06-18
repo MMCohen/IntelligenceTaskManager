@@ -6,6 +6,7 @@ from intelligence_task_manager.routes import agent_routes, mission_routes, repor
 app = FastAPI()
 
 app.include_router(agent_routes.router)
+app.include_router(mission_routes.router)
 
 
 

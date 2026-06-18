@@ -160,7 +160,7 @@ class MissionDB:
 
         if mission_status.lower() == "new" and update_staus.lower() != "assigned":
             return "cannot change"
-        if mission_status.lower() == "assigned" and update_staus.lower() != "in_progress":
+        if mission_status.lower() == "assigned" and update_staus.lower() in ("NEW", "ASSIGNED", "COMPLETED", "CANCELLED"):
             return "cannot change"
         if mission_status.lower() == "in_progress" and update_staus.lower() not in ("failed", "completed"):
             return "cannot change"
