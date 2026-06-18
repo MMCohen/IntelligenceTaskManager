@@ -100,7 +100,27 @@ class MissionDB:
 
 
     def get_open_missions_by_agent(self, id):
-        pass
+        """
+        returns list with ASSIGNED or IN_PROGRESS by id
+        :param id:
+        :return:
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+            SELECT * FROM missions
+            WHERE assigned_agent_id = %s AND status = "ASSIGNED" OR status = "IN_PROGRESS";
+            """, (id, ))
+
+            open_missions = cursor.fetchall()
+
+        finally:
+            cursor.close()
+            connector.close()
+
+        return open_missions
+
 
 
     def count_all_missions(self):
@@ -129,4 +149,6 @@ if __name__ == "__main__":
     # print(mis.create_mission(new_mis))
     # print(mis.get_all_missions())
     # print(mis.get_mission_by_id(1))
+
+    print(mis.get_open_missions_by_agent(2))
 
