@@ -1,6 +1,9 @@
 from intelligence_task_manager.database.connection_db import ConnectionDB
+from intelligence_task_manager.database.mission_db import MissionDB
 
 connection = ConnectionDB()
+
+mission_db = MissionDB()
 
 class AgentDB:
 
@@ -99,7 +102,7 @@ class AgentDB:
             connector.close()
 
 
-    def deactivate_agent(self, id: int) -> dict[str]:
+    def deactivate_agent(self, id: int) -> dict[str, str] | None:
         """
         sets is_active to False by id
         :return: str message
@@ -125,57 +128,109 @@ class AgentDB:
         finally:
             cursor.close()
             connector.close()
+        return None
 
 
-    def increment_completed(self, id: int):
-        """
-        increase the completed_missions by id
-        :param id:
-        :return:
-        """
-        connector = connection.get_connection()
-        cursor = connector.cursor(dictionary=True)
-
-        cursor.execute("SELECT completed_missions FROM agents WHERE id = %s;", (id,))
-        agent_data = cursor.fetchone()
-
-        cursor.close()
-        connector.close()
-
-        try:
-            cursor.execute("SELECT completed_missions FROM agents WHERE id = %s;", (id, ))
-            agent_data = cursor.fetchone()
-
-        #
-        # finally:
-        #
-        # if not agent_data:
-        #     return {"message": "mission completion number could not updated or agent does not exist"}
-        #
-        # if agent_data:
-        #     update_completed = {}
-        #     update_completed["completed_missions"] = agent_data.get("completed_missions", 0) + 1
-        #
-        #     self.update_agent(id, update_completed)
-        #
-        #     return {"message": "mission completion number updated"}
-        #
-        # else:
-        #     return {"message": "mission completion number could not updated or agent does not exist"}
-        #
-        # connector.commit()
+    # def increment_completed(self, id: int):
+    #     """
+    #     increase the completed_missions by id
+    #     :param id:
+    #     :return:
+    #     """
+    #
+    #     connector = connection.get_connection()
+    #     cursor = connector.cursor(dictionary=True)
+    #
+    #     try:
+    #         cursor.execute("SELECT completed_missions FROM agents WHERE id = %s;", (id,))
+    #         agent_data = cursor.fetchone()
+    #
+    #     finally:
+    #         cursor.close()
+    #         connector.close()
+    #
+    #     number_of_completed_missions = agent_data.get("completed_missions", 0)
+    #
+    #     if number_of_completed_missions:
+    #         update_number_of_completed = number_of_completed_missions + 1
+    #
+    #         try:
+    #             connector = connection.get_connection()
+    #             cursor = connector.cursor(dictionary=True)
+    #
+    #             cursor.execute("""
+    #             UPDATE agents
+    #             SET completed_missions = %s
+    #             WHERE id = %s;
+    #             """, (update_number_of_completed, id))
+    #
+    #             connector.commit()
+    #
+    #             is_increase = cursor.rowcount > 0
+    #
+    #         finally:
+    #             cursor.close()
+    #             connector.close()
+    #
+    #     if is_increase:
+    #         return {"message": "mission completion number updated"}
+    #     else:
+    #         return {"message": "mission completion number could not update or agent does not exist"}
 
 
     def increment_failed(self, id):
+        pass
 
 
 
     def get_agent_performance(self, id):
-        pass
+        """
+        calculate agent performance
+        :param id:
+        :return:
+        """
+        agent_data: dict = self.get_agent_by_id(id)
+        if agent_data:
+            agent_open_missions = mission_db.get_open_missions_by_agent(id)
+
+            completed = agent_data["completed_missions"]
+            failed = agent_data["failed_missions"]
+            total = completed + failed + len(agent_open_missions)
+            success_rate = 100 / total * completed
+
+            return {"completed": completed,
+                    "failed": failed,
+                    "total": total,
+                    "success_rate": success_rate
+                    }
+
+        return None
 
 
-    def agents_active_count(self):
-        pass
+    def count_active_agents(self) -> int:
+        """
+        count the number of active agents
+        :return: int
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+
+        cursor.execute("""
+        SELECT COUNT(is_active) as active_agents FROM agents
+        WHERE is_active = True;
+        """)
+
+        data = cursor.fetchone()
+
+        cursor.close()
+        connector.close()
+
+        active_agents = data.get("active_agents", 0)
+
+        return active_agents
+
+
+
 
 
 if __name__ == "__main__":
@@ -189,4 +244,8 @@ if __name__ == "__main__":
 
     # print(ag.deactivate_agent(4))
 
-    print(ag.increment_completed(3))
+    # print(ag.increment_completed(3))
+
+    # print(ag.count_active_agents())
+
+    # print(ag.get_agent_performance(2))
