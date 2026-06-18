@@ -126,8 +126,27 @@ class MissionDB:
         pass
 
 
-    def count_by_status(self, status):
-        pass
+    def count_by_status(self, status: str) -> int:
+        """
+        count missions by status
+        :param status: str
+        :return: int
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                            SELECT COUNT(*) as count_by_status FROM missions
+                            WHERE status = %s;
+                            """, (status, ))
+
+            count_by_status = cursor.fetchone()
+
+        finally:
+            cursor.close()
+            connector.close()
+
+        return count_by_status["count_by_status"]
 
 
     def count_open_missions(self) -> int:
@@ -187,4 +206,5 @@ if __name__ == "__main__":
 
     # print(mis.get_open_missions_by_agent(2))
     # print(mis.count_open_missions())
-    print(mis.count_critical_missions())
+    # print(mis.count_critical_missions())
+    print(mis.count_by_status("NEW"))
