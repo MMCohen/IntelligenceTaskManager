@@ -131,80 +131,64 @@ class AgentDB:
         return None
 
 
-    # def increment_completed(self, id: int):
-    #     """
-    #     increase the completed_missions by id
-    #     :param id:
-    #     :return:
-    #     """
-    #
-    #     connector = connection.get_connection()
-    #     cursor = connector.cursor(dictionary=True)
-    #
-    #     try:
-    #         cursor.execute("SELECT completed_missions FROM agents WHERE id = %s;", (id,))
-    #         agent_data = cursor.fetchone()
-    #
-    #     finally:
-    #         cursor.close()
-    #         connector.close()
-    #
-    #     number_of_completed_missions = agent_data.get("completed_missions", 0)
-    #
-    #     if number_of_completed_missions:
-    #         update_number_of_completed = number_of_completed_missions + 1
-    #
-    #         try:
-    #             connector = connection.get_connection()
-    #             cursor = connector.cursor(dictionary=True)
-    #
-    #             cursor.execute("""
-    #             UPDATE agents
-    #             SET completed_missions = %s
-    #             WHERE id = %s;
-    #             """, (update_number_of_completed, id))
-    #
-    #             connector.commit()
-    #
-    #             is_increase = cursor.rowcount > 0
-    #
-    #         finally:
-    #             cursor.close()
-    #             connector.close()
-    #
-    #     if is_increase:
-    #         return {"message": "mission completion number updated"}
-    #     else:
-    #         return {"message": "mission completion number could not update or agent does not exist"}
-
-
-    def increment_failed(self, id):
+    def increment_completed(self, id: int):
         """
-        increase agent failed missions
+        increase the completed_missions by id
         :param id:
         :return:
         """
+
         agent_data = self.get_agent_by_id(id)
 
         if not agent_data:
             return "agent doesn't exist"
 
-        agent_failed_missions = agent_data.get("failed_missions", 0)
-        update_failed_missions = agent_failed_missions + 1
+        agent_completed_missions = agent_data.get("completed_missions", 0)
+        update_completed_missions = agent_completed_missions + 1
 
         connector = connection.get_connection()
         cursor = connector.cursor()
 
         cursor.execute("""
-        UPDATE agents
-        SET failed_missions = %s
-        WHERE id = %s;""", (update_failed_missions, id))
+                    UPDATE agents
+                    SET completed_missions = %s
+                    WHERE id = %s;""", (update_completed_missions, id))
 
         connector.commit()
         cursor.close()
         connector.close()
 
-        return "agent increase failed missions successfully"
+        return "agent increase completed missions successfully"
+
+
+    def increment_failed(self, id):
+            """
+            increase agent failed missions
+            :param id:
+            :return:
+            """
+            agent_data = self.get_agent_by_id(id)
+
+            if not agent_data:
+                return "agent doesn't exist"
+
+            agent_failed_missions = agent_data.get("failed_missions", 0)
+            update_failed_missions = agent_failed_missions + 1
+
+            connector = connection.get_connection()
+            cursor = connector.cursor()
+
+            cursor.execute("""
+            UPDATE agents
+            SET failed_missions = %s
+            WHERE id = %s;""", (update_failed_missions, id))
+
+            connector.commit()
+            cursor.close()
+            connector.close()
+
+            return "agent increase failed missions successfully"
+
 
     def get_agent_performance(self, id):
         """
@@ -267,10 +251,10 @@ if __name__ == "__main__":
 
     # print(ag.deactivate_agent(4))
 
-    # print(ag.increment_completed(3))
+    print(ag.increment_completed(2))
 
     # print(ag.count_active_agents())
 
     # print(ag.get_agent_performance(2))
 
-    print((ag.increment_failed(2)))
+    # print((ag.increment_failed(2)))
