@@ -179,9 +179,32 @@ class AgentDB:
 
 
     def increment_failed(self, id):
-        pass
+        """
+        increase agent failed missions
+        :param id:
+        :return:
+        """
+        agent_data = self.get_agent_by_id(id)
 
+        if not agent_data:
+            return "agent doesn't exist"
 
+        agent_failed_missions = agent_data.get("failed_missions", 0)
+        update_failed_missions = agent_failed_missions + 1
+
+        connector = connection.get_connection()
+        cursor = connector.cursor()
+
+        cursor.execute("""
+        UPDATE agents
+        SET failed_missions = %S
+        WHERE id = %s;""", (update_failed_missions, id))
+
+        connector.commit()
+        cursor.close()
+        connector.close()
+
+        return "agent increase failed missions successfully"
 
     def get_agent_performance(self, id):
         """
