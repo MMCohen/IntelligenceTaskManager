@@ -51,6 +51,7 @@ def get_agent_by_id(id: int):
         message = "agent does not exist"
         raise HTTPException(status_code=404, detail=message)
 
+    return agent
 
 @router.put("/agents/{id}")
 def update_agent_by_id(id: int, data: UpdateAgent):
@@ -74,8 +75,30 @@ def update_agent_by_id(id: int, data: UpdateAgent):
 
 @router.put("/agents/{id}/deactivate")
 def deactivate_agent_by_id(id: int):
-    pass
+    is_agent_exist = agent_db.get_agent_by_id(id)
+
+    if not is_agent_exist:
+        message = "agent does not exist"
+        raise HTTPException(status_code=404, detail=message)
+
+    is_deleted = agent_db.deactivate_agent(id)
+    if is_deleted:
+        return "is_active=False"
+
+    raise HTTPException(status_code=400, detail="somthing went wrong")
+
+
 
 @router.get("/agents/{id}/performance")
-def deactivate_agent_by_id(id: int):
-    pass
+def get_agent_performance(id: int):
+    is_agent_exist = agent_db.get_agent_by_id(id)
+
+    if not is_agent_exist:
+        message = "agent does not exist"
+        raise HTTPException(status_code=404, detail=message)
+
+    agent_performance = agent_db.get_agent_performance(id)
+
+    return agent_performance
+
+

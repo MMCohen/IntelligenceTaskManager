@@ -123,7 +123,9 @@ class AgentDB:
             connector.commit()
 
             is_update = cursor.rowcount > 0
+            return is_update
             if is_update:
+                return
                 return {"message": f"agent id {id} deactivate successfully"}
             if not is_update:
                 return {"message": f"agent id {id} could not be deactivate"}
@@ -193,7 +195,7 @@ class AgentDB:
             return "agent increase failed missions successfully"
 
 
-    def get_agent_performance(self, id):
+    def get_agent_performance(self, id: int):
         """
         calculate agent performance
         :param id:
