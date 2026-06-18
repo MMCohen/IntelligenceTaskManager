@@ -315,3 +315,4 @@ if __name__ == "__main__":
     # print(mis.count_all_missions())
     # print(mis.assign_mission(5, 6))
     # print(mis.update_mission_status(2, "in_progress"))
+    print(mis.get_top_agent())
