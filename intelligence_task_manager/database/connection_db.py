@@ -1,5 +1,4 @@
 import mysql.connector
-from mysql.connector.aio import connect
 
 
 class ConnectionDB:
