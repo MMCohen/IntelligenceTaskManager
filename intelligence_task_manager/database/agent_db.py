@@ -197,7 +197,7 @@ class AgentDB:
 
         cursor.execute("""
         UPDATE agents
-        SET failed_missions = %S
+        SET failed_missions = %s
         WHERE id = %s;""", (update_failed_missions, id))
 
         connector.commit()
@@ -272,3 +272,5 @@ if __name__ == "__main__":
     # print(ag.count_active_agents())
 
     # print(ag.get_agent_performance(2))
+
+    print((ag.increment_failed(2)))
