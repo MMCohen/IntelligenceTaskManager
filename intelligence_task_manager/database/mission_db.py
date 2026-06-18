@@ -122,7 +122,6 @@ class MissionDB:
         return open_missions
 
 
-
     def count_all_missions(self):
         pass
 
@@ -131,8 +130,26 @@ class MissionDB:
         pass
 
 
-    def count_open_missions(self):
-        pass
+    def count_open_missions(self) -> int:
+        """
+        count open missions
+        :return: int
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                    SELECT COUNT(*) as open_missions FROM missions
+                    WHERE status = "ASSIGNED" OR status = "IN_PROGRESS";
+                    """)
+
+            open_missions = cursor.fetchone()
+
+        finally:
+            cursor.close()
+            connector.close()
+
+        return open_missions["open_missions"]
 
 
     def count_critical_missions(self):
@@ -150,5 +167,5 @@ if __name__ == "__main__":
     # print(mis.get_all_missions())
     # print(mis.get_mission_by_id(1))
 
-    print(mis.get_open_missions_by_agent(2))
-
+    # print(mis.get_open_missions_by_agent(2))
+    print(mis.count_open_missions())
