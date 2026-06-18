@@ -182,8 +182,6 @@ class MissionDB:
         return "update success"
 
 
-
-
     def get_open_missions_by_agent(self, id):
         """
         returns list with ASSIGNED or IN_PROGRESS by id
@@ -284,7 +282,24 @@ class MissionDB:
 
 
     def get_top_agent(self):
-        pass
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+
+        cursor.execute("""
+        SELECT id, name, specialty, is_active, failed_missions, agent_rank, max(completed_missions) as completed_missions  
+        FROM agents
+        group by id, name, specialty, is_active, failed_missions, agent_rank
+        order by completed_missions desc
+        limit 1
+        ;
+        """)
+
+        data = cursor.fetchone()
+
+        cursor.close()
+        connector.close()
+
+        return data
 
 
 if __name__ == "__main__":

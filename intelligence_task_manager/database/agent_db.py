@@ -250,11 +250,11 @@ class AgentDB:
         """)
 
         data = cursor.fetchone()
-        print(data)
 
         cursor.close()
         connector.close()
 
+        return data
 
 
 
