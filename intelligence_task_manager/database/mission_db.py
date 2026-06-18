@@ -4,6 +4,8 @@ connection = ConnectionDB()
 
 class MissionDB:
 
+    MAX_OPEN_MISSIONS_PER_AGENT = 3
+
     def create_mission(self, data: dict) -> dict:
         """
         add new mission to the database
@@ -91,8 +93,66 @@ class MissionDB:
             connector.close()
 
 
+    def get_agent_by_id(self, id: int) -> dict | None:
+        """
+        :param id: int
+        :return: dict of the agent. None if not found
+        """
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+
+        try:
+            cursor.execute("SELECT * FROM agents WHERE id = %s;", (id,))
+            data = cursor.fetchone()
+            return data
+
+        finally:
+            cursor.close()
+            connector.close()
+
+
     def assign_mission(self, m_id, a_id):
-        pass
+        """
+        assign_mission to agent
+        :return:
+        """
+        agent_data = self.get_agent_by_id(a_id)
+        mission_data = self.get_mission_by_id(m_id)
+        agent_open_missions = self.get_open_missions_by_agent(a_id)
+        number_of_agent_missions = len(agent_open_missions)
+
+        if not agent_data or agent_data["is_active"] == False:
+            return "agent not exist or not active"
+
+        if not mission_data or mission_data["status"].lower() != "new":
+            return "mission not found or cannot be assigned"
+
+        if number_of_agent_missions >= MissionDB.MAX_OPEN_MISSIONS_PER_AGENT:
+            return "agent already assigned maximum missions"
+
+        if mission_data["risk_level"].lower() == "critical" and agent_data["agent_rank"].lower() != "commander":
+            return "agent must be a commander in order to assigned critical missions"
+
+        mission_data["status"] = "ASSIGNED"
+        mission_data["assigned_agent_id"] = a_id
+
+        connector = connection.get_connection()
+        cursor = connector.cursor()
+
+        sql_claus = ", ".join([f"{key} = %s" for key in mission_data.keys()])
+        sql_vals = list(mission_data.values()) + [m_id]
+
+        cursor.execute(f"""
+        UPDATE missions
+        SET {sql_claus}
+        WHERE id = %s;""", sql_vals)
+
+        connector.commit()
+        cursor.close()
+        connector.close()
+        return "assign successfully"
+
+
 
 
     def update_mission_status(self, id, status):
@@ -198,8 +258,8 @@ class MissionDB:
         return critical_missions["critical_missions"]
 
 
-def get_top_agent(self):
-        pass
+    def get_top_agent(self):
+            pass
 
 
 if __name__ == "__main__":
@@ -212,4 +272,5 @@ if __name__ == "__main__":
     # print(mis.get_open_missions_by_agent(2))
     # print(mis.count_open_missions())
     # print(mis.count_critical_missions())
-    print(mis.count_all_missions())
+    # print(mis.count_all_missions())
+    print(mis.assign_mission(5, 6))
