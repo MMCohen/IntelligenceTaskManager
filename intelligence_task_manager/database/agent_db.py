@@ -236,6 +236,26 @@ class AgentDB:
 
         return active_agents
 
+    def get_top_agent(self):
+        connector = connection.get_connection()
+        cursor = connector.cursor(dictionary=True)
+
+        cursor.execute("""
+        SELECT id, name, specialty, is_active, failed_missions, agent_rank, max(completed_missions) as completed_missions  
+        FROM agents
+        group by id, name, specialty, is_active, failed_missions, agent_rank
+        order by completed_missions desc
+        limit 1
+        ;
+        """)
+
+        data = cursor.fetchone()
+        print(data)
+
+        cursor.close()
+        connector.close()
+
+
 
 
 
@@ -251,10 +271,12 @@ if __name__ == "__main__":
 
     # print(ag.deactivate_agent(4))
 
-    print(ag.increment_completed(2))
+    # print(ag.increment_completed(1))
 
     # print(ag.count_active_agents())
 
     # print(ag.get_agent_performance(2))
 
     # print((ag.increment_failed(2)))
+
+    print(ag.get_top_agent())
