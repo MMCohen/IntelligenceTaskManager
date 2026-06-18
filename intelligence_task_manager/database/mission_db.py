@@ -153,10 +153,35 @@ class MissionDB:
         return "assign successfully"
 
 
+    def update_mission_status(self, id: int, status: str):
+        mission_data = self.get_mission_by_id(id)
+        mission_status = mission_data["status"]
+        update_staus = status
+
+        if mission_status.lower() == "new" and update_staus.lower() != "assigned":
+            return "cannot change"
+        if mission_status.lower() == "assigned" and update_staus.lower() != "in_progress":
+            return "cannot change"
+        if mission_status.lower() == "in_progress" and update_staus.lower() not in ("failed", "completed"):
+            return "cannot change"
+
+        mission_data["status"] = update_staus
+
+        connector = connection.get_connection()
+        cursor = connector.cursor()
+
+        cursor.execute("""
+        UPDATE missions
+        SET status = %s
+        WHERE id = %s;""",(update_staus, id))
+
+        connector.commit()
+        cursor.close()
+        connector.close()
+
+        return "update success"
 
 
-    def update_mission_status(self, id, status):
-        pass
 
 
     def get_open_missions_by_agent(self, id):
@@ -259,7 +284,7 @@ class MissionDB:
 
 
     def get_top_agent(self):
-            pass
+        pass
 
 
 if __name__ == "__main__":
@@ -273,4 +298,5 @@ if __name__ == "__main__":
     # print(mis.count_open_missions())
     # print(mis.count_critical_missions())
     # print(mis.count_all_missions())
-    print(mis.assign_mission(5, 6))
+    # print(mis.assign_mission(5, 6))
+    # print(mis.update_mission_status(2, "in_progress"))
